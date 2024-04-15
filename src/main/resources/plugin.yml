@@ -1,0 +1,11 @@
+name: CTFHexa
+version: '${project.version}'
+main: org.hexa.ctfhexa.CTFHexa
+api-version: '1.20'
+commands:
+  flags:
+    usage: /<command>
+    description: Spawnea banderas
+  flaglocation:
+    usage: /<command>
+    description: Spawnea una bandera en tu ubicacion
