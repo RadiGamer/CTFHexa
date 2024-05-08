@@ -2,6 +2,7 @@ package org.hexa.ctfhexa.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -41,7 +42,7 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
         }
 
         boolean isBlue = args[0].equalsIgnoreCase("azul");
-        int customModelData = isBlue ? 3 : 4;
+        int customModelData = isBlue ? 7 : 8;
         Color flagColor = isBlue ? Color.BLUE : Color.RED;
 
         ItemStack flag = new ItemStack(Material.STICK);
@@ -49,13 +50,19 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
         meta.setCustomModelData(customModelData);
         flag.setItemMeta(meta);
 
-        Interaction interaction = (Interaction) player.getWorld().spawn(player.getLocation(), Interaction.class);
+        Interaction interaction = player.getWorld().spawn(player.getLocation(), Interaction.class);
         interaction.setInteractionHeight(2f);
         interaction.setInteractionWidth(1f);
         interaction.addScoreboardTag(isBlue ? "BlueFlag" : "RedFlag");
 
-        ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawn(player.getLocation(), ItemDisplay.class);
+        Location spawnLocation = player.getLocation().clone();
+        spawnLocation.setY(spawnLocation.getY() + 1);
+        spawnLocation.setX(spawnLocation.getX() - 1);
+
+        ItemDisplay itemDisplay = player.getWorld().spawn(spawnLocation, ItemDisplay.class);
         itemDisplay.setItemStack(flag);
+        itemDisplay.setDisplayWidth(0.3f);
+        itemDisplay.setDisplayHeight(0.5f);
         itemDisplay.setGlowColorOverride(flagColor);
 
         player.sendMessage(ChatColor.GREEN + "La bandera ha sido spawneada en tu ubicacion.");

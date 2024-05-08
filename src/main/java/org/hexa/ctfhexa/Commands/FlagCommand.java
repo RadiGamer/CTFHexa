@@ -33,8 +33,8 @@ public class FlagCommand implements CommandExecutor {
             for (int z = minZ; z <= maxZ; z++) {
                 for (int y = 0; y < world.getMaxHeight(); y++) {
                     Block block = world.getBlockAt(x, y, z);
-                    if (block.getType() == Material.BLUE_TERRACOTTA || block.getType() == Material.RED_TERRACOTTA) {
-                        spawnFlag(block, block.getType() == Material.BLUE_TERRACOTTA);
+                    if (block.getType() == Material.BLUE_STAINED_GLASS || block.getType() == Material.RED_STAINED_GLASS) {
+                        spawnFlag(block, block.getType() == Material.BLUE_STAINED_GLASS);
                     }
                 }
             }
@@ -45,6 +45,7 @@ public class FlagCommand implements CommandExecutor {
 
     private void spawnFlag(Block block, boolean isBlue) {
         World world = block.getWorld();
+        Location loc = block.getLocation().add(0.5, 2, 0.5);
         Interaction interaction = (Interaction) world.spawnEntity(block.getLocation().add(0.5, 2, 0.5), EntityType.INTERACTION);
         interaction.setInteractionHeight(2f);
         interaction.setInteractionWidth(1f);
@@ -55,8 +56,10 @@ public class FlagCommand implements CommandExecutor {
         ItemDisplay itemDisplay = (ItemDisplay) world.spawn(block.getLocation().add(0.5, 2, 0.5), ItemDisplay.class);
         ItemStack flag = new ItemStack(Material.STICK);
         ItemMeta meta = flag.getItemMeta();
-        meta.setCustomModelData(isBlue ? 3 : 4);
+        meta.setCustomModelData(isBlue ? 7 : 8);
         flag.setItemMeta(meta);
         itemDisplay.setItemStack(flag);
+
+        Bukkit.getLogger().info((isBlue ? "Blue" : "Red") + " flag spawned at " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ());
     }
 }

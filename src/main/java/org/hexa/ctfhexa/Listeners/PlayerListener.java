@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.hexa.ctfhexa.CTFHexa;
 
@@ -41,10 +42,12 @@ public class PlayerListener implements Listener {
                     Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.BLUE + " Ha capturado la bandera del equipo rojo!");
                     spawnFirework(loc, Color.BLUE);
                     removeAllPassengers(player);
+                    restorePlayerState(player);
                 } else if (hasRedFlag) {
                     Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.RED + " Ha capturado la bandera del equipo azul!");
                     spawnFirework(loc, Color.RED);
                     removeAllPassengers(player);
+                    restorePlayerState(player);
                 }
             }
         }
@@ -60,8 +63,8 @@ public class PlayerListener implements Listener {
                         ItemMeta meta = itemStack.getItemMeta();
                         if (meta.hasCustomModelData()) {
                             int customModelData = meta.getCustomModelData();
-                            return (flagType.equals("BlueFlag") && customModelData == 3) ||
-                                    (flagType.equals("RedFlag") && customModelData == 4);
+                            return (flagType.equals("BlueFlag") && customModelData == 7) ||
+                                    (flagType.equals("RedFlag") && customModelData == 8);
                         }
                     }
                     return false;
@@ -69,7 +72,6 @@ public class PlayerListener implements Listener {
     }
 
     private void restorePlayerState(Player player) {
-        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         player.removePotionEffect(PotionEffectType.GLOWING);
         player.removePotionEffect(PotionEffectType.SLOW);
         player.setGlowing(false);

@@ -41,7 +41,7 @@ public class FlagListener implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, -2, false, false));
         player.setGlowing(true);
-    }
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "playglow " + player.getName() + " GREEN 2 0.8 0.8");    }
 
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
@@ -120,6 +120,7 @@ public class FlagListener implements Listener {
         itemDisplay.getScoreboardTags().forEach(newInteraction::addScoreboardTag);
 
         ItemDisplay newItemDisplay = (ItemDisplay) player.getWorld().spawnEntity(player.getLocation(), EntityType.ITEM_DISPLAY);
+
         newItemDisplay.setItemStack(flag);
         newItemDisplay.setGlowColorOverride(itemDisplay.getGlowColorOverride());
     }

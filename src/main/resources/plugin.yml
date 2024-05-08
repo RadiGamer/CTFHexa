@@ -9,3 +9,24 @@ commands:
   flaglocation:
     usage: /<command>
     description: Spawnea una bandera en tu ubicacion
+  setteam:
+    usage: /setteam <Jugador> <Equipo>
+    description: Asigna individualmente el jugador a un equipo
+  divideplayers:
+    usage: /<command>
+    description: Divide a todos los jugadores en equipos automaticamente 50/50
+  setsavepoint:
+    usage: /<command>
+    description: Guarda el spawnpoint de los equipos
+  teleportteam:
+    usage: /<command>
+    description: Teletransporta a los equipos
+  resetteams:
+    usage: /<command>
+    description: Reinicia los equipos
+  savebuffzone:
+    usage: /<command>
+    description: Saves the current location as a buff zone.
+  buffdeploy:
+    usage: /<command>
+    description: Lanza un buff en las 4 posibles zonas
