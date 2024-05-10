@@ -57,7 +57,12 @@ public class DivideCommand implements CommandExecutor {
             for (String entry : team.getEntries()) {
                 Player teamPlayer = Bukkit.getPlayer(entry);
                 if (teamPlayer != null) {
+                    teamPlayer.setDisplayName(color + teamPlayer.getName());
                     teamPlayer.setPlayerListName(color + teamPlayer.getName());
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        onlinePlayer.hidePlayer(teamPlayer);
+                        onlinePlayer.showPlayer(teamPlayer);
+                    }
                 }
             }
         }

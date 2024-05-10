@@ -13,9 +13,7 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.hexa.ctfhexa.CTFHexa;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +35,11 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage(ChatColor.RED + "Especifica un color (rojo o azul).");
+            player.sendMessage(ChatColor.RED + "Especifica un color (rojo o blue).");
             return false;
         }
 
-        boolean isBlue = args[0].equalsIgnoreCase("azul");
+        boolean isBlue = args[0].equalsIgnoreCase("blue");
         int customModelData = isBlue ? 7 : 8;
         Color flagColor = isBlue ? Color.BLUE : Color.RED;
 
@@ -50,19 +48,17 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
         meta.setCustomModelData(customModelData);
         flag.setItemMeta(meta);
 
+
         Interaction interaction = player.getWorld().spawn(player.getLocation(), Interaction.class);
-        interaction.setInteractionHeight(2f);
-        interaction.setInteractionWidth(1f);
+        interaction.setInteractionHeight(3f);
+        interaction.setInteractionWidth(3f);
         interaction.addScoreboardTag(isBlue ? "BlueFlag" : "RedFlag");
 
-        Location spawnLocation = player.getLocation().clone();
-        spawnLocation.setY(spawnLocation.getY() + 1);
-        spawnLocation.setX(spawnLocation.getX() - 1);
+        Location spawnLocation = player.getLocation().clone().add(0,1,0);
 
         ItemDisplay itemDisplay = player.getWorld().spawn(spawnLocation, ItemDisplay.class);
         itemDisplay.setItemStack(flag);
-        itemDisplay.setDisplayWidth(0.3f);
-        itemDisplay.setDisplayHeight(0.5f);
+
         itemDisplay.setGlowColorOverride(flagColor);
 
         player.sendMessage(ChatColor.GREEN + "La bandera ha sido spawneada en tu ubicacion.");
@@ -73,8 +69,8 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             List<String> colors = new ArrayList<>();
-            colors.add("rojo");
-            colors.add("azul");
+            colors.add("red");
+            colors.add("blue");
             return colors;
         }
         return new ArrayList<>();

@@ -36,6 +36,8 @@ public class SetTeamCommand implements CommandExecutor, TabCompleter {
 
         team.addEntry(target.getName());
         sender.sendMessage(ChatColor.GREEN + "El equipo de " + target.getName() + " se ha establecido como " + team.getDisplayName() + ".");
+        setPlayerTeamColor(target, team.getColor());
+
         return true;
     }
 
@@ -51,5 +53,18 @@ public class SetTeamCommand implements CommandExecutor, TabCompleter {
             return Arrays.asList("red", "blue");
         }
         return null;
+    }
+    private void setPlayerTeamColor(Player player, ChatColor color) {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Team team = scoreboard.getEntryTeam(player.getName());
+        if (team != null) {
+            team.setColor(color);
+            for (String entry : team.getEntries()) {
+                Player teamPlayer = Bukkit.getPlayer(entry);
+                if (teamPlayer != null) {
+                    teamPlayer.setPlayerListName(color + teamPlayer.getName());
+                }
+            }
+        }
     }
 }

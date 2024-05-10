@@ -13,10 +13,13 @@ import org.hexa.ctfhexa.Listeners.PlayerListener;
 
 public final class CTFHexa extends JavaPlugin {
     private FileConfiguration config;
+    private BossBarCommand bossBarCommand;
 
 
     @Override
     public void onEnable() {
+
+        bossBarCommand = new BossBarCommand();
 
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Team blueTeam = scoreboard.getTeam("blue");
@@ -26,7 +29,6 @@ public final class CTFHexa extends JavaPlugin {
             blueTeam.setDisplayName("Blue Team");
         }
 
-        // Create the red team if it doesn't exist
         Team redTeam = scoreboard.getTeam("red");
         if (redTeam == null) {
             redTeam = scoreboard.registerNewTeam("red");
@@ -50,9 +52,11 @@ public final class CTFHexa extends JavaPlugin {
         getCommand("resetteams").setExecutor(new ResetTeamCommand(this));
         getCommand("savebuffzone").setExecutor(new SaveBuffZoneCommand(this));
         getCommand("buffdeploy").setExecutor(new BuffCommand(this));
+        getCommand("setflagspawn").setExecutor(new SetFlagSpawn(this));
+        getCommand("flagbossbar").setExecutor(bossBarCommand);
 
         getServer().getPluginManager().registerEvents(new FlagListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerListener(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(this, bossBarCommand),this);
 
     }
 //TODO PULIR EQUIPOS

@@ -2,11 +2,9 @@ package org.hexa.ctfhexa.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -30,11 +28,22 @@ public class ResetTeamCommand implements CommandExecutor {
             return true;
         }
 
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
-        redTeam.getEntries().forEach(redTeam::removeEntry);
+        resetTeam(blueTeam);
+        resetTeam(redTeam);
 
         sender.sendMessage(ChatColor.GREEN + "Los equipos han sido reiniciados. Todos los jugadores han sido retirados de los equipos.");
 
         return true;
+    }
+    private void resetTeam(Team team) {
+        team.setColor(ChatColor.WHITE);
+        team.getEntries().forEach(entry -> {
+            team.removeEntry(entry);
+            Player player = Bukkit.getPlayer(entry);
+            if (player != null) {
+                player.setPlayerListName(player.getName());
+                player.setBedSpawnLocation(null, true);
+            }
+        });
     }
 }

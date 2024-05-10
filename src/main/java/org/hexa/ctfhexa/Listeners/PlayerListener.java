@@ -2,10 +2,7 @@ package org.hexa.ctfhexa.Listeners;
 
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.ItemDisplay;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -15,15 +12,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.hexa.ctfhexa.CTFHexa;
+import org.hexa.ctfhexa.Commands.BossBarCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerListener implements Listener {
     private CTFHexa plugin;
+    private BossBarCommand bossBarCommand;
 
-    public PlayerListener(CTFHexa plugin) {
+    public PlayerListener(CTFHexa plugin, BossBarCommand bossBarCommand) {
         this.plugin = plugin;
+        this.bossBarCommand = bossBarCommand;
     }
 
     @EventHandler
@@ -39,15 +39,25 @@ public class PlayerListener implements Listener {
             if ((blockBelow == Material.RED_TERRACOTTA && hasBlueFlag) ||
                     (blockBelow == Material.BLUE_TERRACOTTA && hasRedFlag)) {
                 if (hasBlueFlag) {
-                    Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.BLUE + " Ha capturado la bandera del equipo rojo!");
+                    Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.YELLOW + " Ha capturado la bandera del equipo "+ ChatColor.BLUE + "azul");
+
                     spawnFirework(loc, Color.BLUE);
                     removeAllPassengers(player);
                     restorePlayerState(player);
+                    bossBarCommand.addPointsToBlue();
+                    for (Player players : Bukkit.getOnlinePlayers()){
+                        players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10, 1);
+                    }
+
                 } else if (hasRedFlag) {
-                    Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.RED + " Ha capturado la bandera del equipo azul!");
+                    Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.YELLOW + " Ha capturado la bandera del equipo "+ ChatColor.RED + "rojo");
                     spawnFirework(loc, Color.RED);
                     removeAllPassengers(player);
                     restorePlayerState(player);
+                    bossBarCommand.addPointsToRed();
+                    for (Player players : Bukkit.getOnlinePlayers()){
+                        players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10, 1);
+                    }
                 }
             }
         }
@@ -101,5 +111,43 @@ public class PlayerListener implements Listener {
                 .build());
         meta.setPower(1);
         fw.setFireworkMeta(meta);
+    }
+    @EventHandler
+    public void onPlayerMoveBuffBox(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        List<Entity> nearbyEntities = player.getNearbyEntities(1.0, 1.0, 1.0);
+        for (Entity entity : nearbyEntities) {
+            if (entity instanceof Interaction) {
+                Interaction interaction = (Interaction) entity;
+
+                if (interaction.getScoreboardTags().contains("BuffBox")) {
+                    for (PotionEffectType type : PotionEffectType.values()) {
+                        player.removePotionEffect(type);
+                    }
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 60, 0));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20 * 60, 0));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20 * 60, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 60, 0));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0));
+
+                    for (Player players : Bukkit.getOnlinePlayers()){
+                        players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10, 1);
+                    }
+
+                    Bukkit.broadcastMessage(ChatColor.YELLOW + "¡" + player.getDisplayName() + ChatColor.YELLOW + " ha recibido un potenciador por un minuto!");
+
+                    List<Entity> allNearbyEntities = interaction.getNearbyEntities(2.0, 2.0, 2.0);
+                    for (Entity nearby : allNearbyEntities) {
+                        if (nearby instanceof ItemDisplay) {
+                            nearby.remove();
+                        }
+                    }
+
+                    interaction.remove();
+                    break;
+                }
+            }
+        }
     }
 }

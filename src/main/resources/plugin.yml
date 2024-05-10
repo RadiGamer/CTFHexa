@@ -30,3 +30,9 @@ commands:
   buffdeploy:
     usage: /<command>
     description: Lanza un buff en las 4 posibles zonas
+  setflagspawn:
+    usage: /<command>
+    description: Configura el spawn de la bandera
+  flagbossbar:
+    usage: /<command>
+    description: Muestra la bossbar
