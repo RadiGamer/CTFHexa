@@ -13,7 +13,11 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Transformation;
 import org.hexa.ctfhexa.CTFHexa;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,16 +54,21 @@ public class FlagOnLocationCommand implements CommandExecutor, TabCompleter {
 
 
         Interaction interaction = player.getWorld().spawn(player.getLocation(), Interaction.class);
-        interaction.setInteractionHeight(3f);
-        interaction.setInteractionWidth(3f);
+        interaction.setInteractionHeight(4f);
+        interaction.setInteractionWidth(4f);
         interaction.addScoreboardTag(isBlue ? "BlueFlag" : "RedFlag");
+        interaction.addScoreboardTag("Flag");
 
-        Location spawnLocation = player.getLocation().clone().add(0,1,0);
+
+        Location spawnLocation = player.getLocation().clone().add(1,2,0);
 
         ItemDisplay itemDisplay = player.getWorld().spawn(spawnLocation, ItemDisplay.class);
+        itemDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(2f), new AxisAngle4f()));
         itemDisplay.setItemStack(flag);
+        itemDisplay.addScoreboardTag("Flag");
 
         itemDisplay.setGlowColorOverride(flagColor);
+        itemDisplay.setGlowing(true);
 
         player.sendMessage(ChatColor.GREEN + "La bandera ha sido spawneada en tu ubicacion.");
         return true;

@@ -8,12 +8,17 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.hexa.ctfhexa.CTFHexa;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,8 +72,9 @@ public class FlagListener implements Listener {
 
                 ItemDisplay itemDisplay = findItemDisplay(interaction);
                 if (itemDisplay != null) {
+                    itemDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(1f), new AxisAngle4f()));
                     applyFlagEffects(player);
-                    player.addPassenger(itemDisplay);
+                    player.addPassenger(itemDisplay); //TODO CHECAR ESTO
                     interaction.remove();
                     player.sendActionBar(ChatColor.RED + "No puedes usar tus objetos");
                     event.setCancelled(true);
@@ -125,11 +131,13 @@ public class FlagListener implements Listener {
     }
     private void removeFlagEffects(Player player) {
         for (PotionEffectType type : PotionEffectType.values()) {
+            player.setGlowing(false);
             player.removePotionEffect(type);
         }
     }
 
     private void dropFlagOnDeath(Player player, ItemDisplay itemDisplay) {
+        //TODO MODIFICAR TAMAñO
         ItemStack flag = itemDisplay.getItemStack().clone();
 
         ItemMeta meta = flag.getItemMeta();
@@ -138,8 +146,9 @@ public class FlagListener implements Listener {
         Location spawnLocation = player.getLocation().clone().add(0, 1.5, 0);
 
         Interaction newInteraction = (Interaction) player.getWorld().spawnEntity(spawnLocation, EntityType.INTERACTION);
-        newInteraction.setInteractionHeight(3f);
-        newInteraction.setInteractionWidth(3f);
+        newInteraction.setInteractionHeight(4f);
+        newInteraction.setInteractionWidth(4f);
+        newInteraction.addScoreboardTag("Flag");
 
         if (customModelData == 7) {
             newInteraction.addScoreboardTag("BlueFlag");
@@ -156,11 +165,15 @@ public class FlagListener implements Listener {
             players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10, 1);
         }
 
-        spawnLocation.add(0, 1, 0);
+        spawnLocation.add(0, 2, 0);
+
 
         ItemDisplay newItemDisplay = (ItemDisplay) player.getWorld().spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY);
-
+        newItemDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(2f), new AxisAngle4f()));
         newItemDisplay.setItemStack(flag);
+        newItemDisplay.setGlowing(true);
+        newItemDisplay.addScoreboardTag("Flag");
+
         newItemDisplay.setGlowColorOverride(itemDisplay.getGlowColorOverride());
     }
 }

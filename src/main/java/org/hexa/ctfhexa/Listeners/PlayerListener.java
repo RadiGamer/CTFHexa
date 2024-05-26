@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.hexa.ctfhexa.CTFHexa;
 import org.hexa.ctfhexa.Commands.BossBarCommand;
 
@@ -38,6 +40,13 @@ public class PlayerListener implements Listener {
 
             if ((blockBelow == Material.RED_TERRACOTTA && hasBlueFlag) ||
                     (blockBelow == Material.BLUE_TERRACOTTA && hasRedFlag)) {
+
+                if ((blockBelow == Material.BLUE_TERRACOTTA && isPlayerInTeam(player, "red")) ||
+                        (blockBelow == Material.RED_TERRACOTTA && isPlayerInTeam(player, "blue"))) {
+                    player.sendMessage(ChatColor.RED + "No puedes capturar tu propia bandera");
+                    return;
+                }
+
                 if (hasBlueFlag) {
                     Bukkit.getServer().broadcastMessage(player.getName() + ChatColor.YELLOW + " Ha capturado la bandera del equipo "+ ChatColor.BLUE + "azul");
 
@@ -61,6 +70,10 @@ public class PlayerListener implements Listener {
                 }
             }
         }
+    }
+    private boolean isPlayerInTeam(Player player, String teamName) {
+        Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
+        return team != null && team.hasEntry(player.getName());
     }
 
     private boolean hasFlag(Player player, String flagType) {

@@ -10,7 +10,10 @@ import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Transformation;
 import org.hexa.ctfhexa.CTFHexa;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 public class FlagCommand implements CommandExecutor {
 
@@ -51,19 +54,24 @@ public class FlagCommand implements CommandExecutor {
     private void spawnFlag(Location location, boolean isBlue) {
         World world = location.getWorld();
         Color flagColor = isBlue ? Color.BLUE : Color.RED;
-        Location loc = location.clone().add(0, 2, 0);
+        Location loc = location.clone().add(1.5, 0, 0);
 
         Interaction interaction = (Interaction) world.spawnEntity(loc, EntityType.INTERACTION);
-        interaction.setInteractionHeight(3f);
-        interaction.setInteractionWidth(3f);
+        interaction.setInteractionHeight(4f);
+        interaction.setInteractionWidth(4f);
         interaction.addScoreboardTag(isBlue ? "BlueFlag" : "RedFlag");
         interaction.setResponsive(true);
+        interaction.addScoreboardTag("Flag");
 
-        loc.add(0,1,0);
+        loc.add(0,2,0);
 
         ItemDisplay itemDisplay = (ItemDisplay) world.spawn(loc, ItemDisplay.class);
+        itemDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(2f), new AxisAngle4f()));
+
         ItemStack flag = new ItemStack(Material.STICK);
         itemDisplay.setGlowColorOverride(flagColor);
+        itemDisplay.setGlowing(true);
+        itemDisplay.addScoreboardTag("Flag");
 
         ItemMeta meta = flag.getItemMeta();
         meta.setCustomModelData(isBlue ? 7 : 8);
